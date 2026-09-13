@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    /* Velvet Soliloquy & 3D Cyber-Pink Palette */
+    --bg-base: #0a0614;
+    --bg-surface: #120b22;
+    --bg-card: #1a1032;
+    --bg-card-hover: #241544;
+    --bg-card-elevated: #2f1956;
+    --bg-glass: rgba(26, 16, 50, 0.85);
+    --bg-glass-nav: rgba(16, 9, 30, 0.94);
+    --bg-modal: #150d2a;
+
+    /* Vibrant Pink & Rose Accents */
+    --accent-pink: #ff2e93;
+    --accent-pink-hover: #ff52a2;
+    --accent-rose: #ff437e;
+    --accent-magenta: #ec4899;
+    --accent-fuchsia: #d946ef;
+    --accent-purple: #a855f7;
+    --accent-cyan: #38bdf8;
+    --accent-emerald: #10b981;
+
+    /* 3D Gradients */
+    --grad-pink: linear-gradient(135deg, #ff2e93 0%, #ff529c 50%, #f43f5e 100%);
+    --grad-pink-hover: linear-gradient(135deg, #ff4fa5 0%, #ff6aa9 50%, #fb7185 100%);
+    --grad-card: linear-gradient(155deg, rgba(32, 19, 62, 0.9) 0%, rgba(18, 11, 35, 0.95) 100%);
+    --grad-hero: linear-gradient(170deg, #0a0614 0%, #190e32 45%, #0e0820 100%);
+    --grad-nav-btn: linear-gradient(135deg, #ff2e93 0%, #d946ef 50%, #8b5cf6 100%);
+    --grad-3d-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+
+    /* Typography */
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-hind: 'Hind Siliguri', sans-serif;
+
+    /* Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #baaacc;
+    --text-muted: #72628c;
+    --text-pink: #ff7bbd;
+
+    /* 3D Shadows & Glows */
+    --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.65), 0 0 18px rgba(255, 46, 147, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    --shadow-card-hover: 0 24px 50px -10px rgba(0, 0, 0, 0.75), 0 0 35px rgba(255, 46, 147, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    --shadow-pink-button: 0 8px 26px rgba(255, 46, 147, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+
+    /* Safe Area Insets for Mobile */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --bottom-nav-height: 68px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    background: var(--bg-base);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+    background-image: 
+      radial-gradient(circle at 15% 10%, rgba(255, 46, 147, 0.09) 0%, transparent 45%),
+      radial-gradient(circle at 85% 65%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 90%, rgba(255, 67, 126, 0.06) 0%, transparent 45%);
+  }
+
+  /* 3D Cyber-Pink Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-surface); }
+  ::-webkit-scrollbar-thumb { 
+    background: linear-gradient(180deg, var(--accent-pink) 0%, var(--accent-purple) 100%); 
+    border-radius: 4px; 
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-pink-hover); }
+}
+
+/* Base Layout Classes */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 1.5rem);
+}
+
+@media (min-width: 769px) {
+  .app-container {
+    padding-bottom: 2.5rem;
+  }
+}
+
+/* 3D Button Base */
+.btn-3d-pink {
+  background: var(--grad-pink);
+  color: #ffffff;
+  box-shadow: var(--shadow-pink-button);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-3d-pink::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.btn-3d-pink:hover {
+  background: var(--grad-pink-hover);
+  box-shadow: 0 12px 32px rgba(255, 46, 147, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  transform: translateY(-2px);
+}
+
+.btn-3d-pink:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 4px 14px rgba(255, 46, 147, 0.4);
+}
+
+/* 3D Map Navigation Button */
+.btn-3d-map {
+  background: var(--grad-nav-btn);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 8px 26px rgba(255, 46, 147, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-3d-map::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.btn-3d-map:hover {
+  box-shadow: 0 14px 38px rgba(255, 46, 147, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.btn-3d-map:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+/* 3D Card Style */
+.card-3d {
+  background: var(--grad-card);
+  border: 1px solid rgba(255, 46, 147, 0.16);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.card-3d:hover {
+  transform: translateY(-7px) scale(1.015);
+  border-color: rgba(255, 46, 147, 0.55);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Category Badge Styling */
+.cat-badge-manjalpur { background: rgba(56, 189, 248, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); }
+.cat-badge-old-city { background: rgba(251, 191, 36, 0.22); color: #fbbf24; border-color: rgba(251, 191, 36, 0.45); }
+.cat-badge-bajwada { background: rgba(217, 70, 239, 0.22); color: #e879f9; border-color: rgba(217, 70, 239, 0.45); }
+.cat-badge-navapura { background: rgba(52, 211, 153, 0.22); color: #34d399; border-color: rgba(52, 211, 153, 0.45); }
+.cat-badge-kishanwadi { background: rgba(249, 115, 22, 0.22); color: #fb923c; border-color: rgba(249, 115, 22, 0.45); }
+.cat-badge-darshan { background: rgba(255, 46, 147, 0.22); color: #ff65af; border-color: rgba(255, 46, 147, 0.45); }
+.cat-badge-other { background: rgba(168, 85, 247, 0.22); color: #c084fc; border-color: rgba(168, 85, 247, 0.45); }
