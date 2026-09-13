@@ -1,83 +1,59 @@
-# TripG 🗺️ — Vadodara Tour & Route Navigator
+# TripG — Vadodara Tour & Route Navigator
 
-A modern, mobile-first web application designed for navigating the **Vadodara Ganesh Darshan Tour** route, starting from **Parul University** across 11 sacred destinations with one-click live Google Maps GPS navigation.
-
----
-
-## 🗺️ Tour Route Overview
-
-```
-Parul University (Start)
-  ↓ (~22–23 km)
-1. Manjalpur Na Raja (Manjalpur)
-  ↓ (~2–3 km)
-2. Icchapurti Ganesh (Manjalpur)
-  ↓ (~1–2 km)
-3. Manmohan Yuvak Mandal / Vadodara Na Maharaja (Dandia Bazar)
-  ↓ (~5–6 km)
-4. Pratap Maddha Ni Pol (Mangal Bazar, Old City)
-  ↓ (~1–2 km)
-5. Kalupura Cha Raja (Nava Bazar, Old City)
-  ↓ (~1 km)
-6. Shree Kantareshwar Mahadev Yuvak Mandal (Bajwada)
-  ↓ (~1–2 km)
-7. Koylifaliya Cha Gan Raja (Bajwada)
-  ↓ (~1–2 km)
-8. Bajwada Hanuman Pole Yuvak Mandal (Bajwada)
-  ↓ (~2–3 km)
-9. Shree Rajsthambh Parivar (Navapura)
-  ↓ (~1 km)
-10. Shree Rajsthambh Society (Navapura)
-  ↓ (~4–5 km)
-11. Azad Group Cha Raja (Kishanwadi)
-```
+A state-of-the-art **3D Cyber-Pink** tour navigation platform designed for seamless mobile and desktop exploration of Vadodara's 11 sacred destinations, featuring turn-by-turn Google Maps GPS routing.
 
 ---
 
-## ✨ Features
+## 🛠️ Technology Stack
 
-- 🚗 **One-Tap Google Maps Navigation** — Instantly calculates the driving route from your current live GPS position to any destination.
-- 📱 **Mobile-First UX** — Native bottom navigation bar, touch-friendly tap targets, and smooth bottom-sheet modals.
-- 📋 **Full CRUD Operations** — Add custom stops, edit coordinates, distance, and notes, or delete stops.
-- 🔍 **Real-Time Search & Area Filters** — Filter by zone (Manjalpur, Old City, Bajwada, Navapura, Kishanwadi) or search by name.
-- ✅ **Visited Status Tracking** — Toggle visited status to keep track of your tour progress.
-- 🌙 **Dark Glassmorphic Theme** — Premium UI styled with Plus Jakarta Sans and modern CSS glassmorphism.
-- ⚡ **Full-Stack Serverless** — Powered by React 18, Vite 5, Node.js API, and MongoDB Atlas.
+### Core Framework
+- **Next.js 15+ (App Router)** — Edge-ready serverless architecture
+- **React 19** — Server & Client Components
+- **TypeScript** — 100% type-safe codebase
 
----
+### Frontend & Styling
+- **Tailwind CSS v4** — Custom Velvet Soliloquy design tokens & 3D Cyber-Pink palette
+- **Framer Motion** — Dynamic card hover physics, ambient glowing particles, smooth modal sheet animations
+- **Lucide React** — Vector icon suite (no emojis)
+- **Google Fonts** — Plus Jakarta Sans, Playfair Display, Hind Siliguri
 
-## 🛠️ Tech Stack
-
-- **Frontend**: React 18, Vite 5, Lucide Icons, React Hot Toast
-- **Backend**: Node.js, Express (local dev) / Vercel Serverless Functions (production)
-- **Database**: MongoDB Atlas with Mongoose
-- **Styling**: Vanilla CSS (Mobile-first responsive design)
-
----
-
-## 🚀 Deployment to Vercel
-
-1. Push this repository to GitHub using GitHub Desktop or Git.
-2. In Vercel, import your GitHub repository (`trip-g`).
-3. Under **Settings → Environment Variables**, add:
-   ```env
-   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/tripg?retryWrites=true&w=majority
-   ```
-4. Deploy the project!
+### Database & Backend
+- **Supabase PostgreSQL** — Real-time relational database
+- **@supabase/supabase-js & @supabase/ssr** — Official Supabase client
+- **Next.js Route Handlers** — `/api/destinations`, `/api/destinations/[id]`, `/api/seed`
+- **Graceful Zero-Downtime Fallback** — Instant local dataset fallback so the app never shows a blank screen
 
 ---
 
-## 💻 Local Development
+## 🚀 Quick Start Locally
 
-Double-click `run.bat` on Windows to start both frontend and API servers simultaneously, or run manually:
+### 1. Start with the 1-Click Batch Runner
+Double-click `run.bat` in the root folder.
 
+### 2. Manual Terminal Commands
 ```bash
-# Terminal 1 — Frontend
+# Install dependencies
+npm install
+
+# Start Next.js Turbopack development server
 npm run dev
 
-# Terminal 2 — Backend API
-npm run dev:api
+# Or build for production
+npm run build
+npm run start
 ```
+Open **[http://localhost:3000](http://localhost:3000)** in your browser or phone on the same Wi-Fi.
 
-- **Frontend**: `http://localhost:5173` (or `http://<your-local-ip>:5173` on mobile)
-- **Backend API**: `http://localhost:3001/api/destinations`
+---
+
+## ⚡ Supabase Setup (Optional)
+
+1. Create a project on [Supabase](https://supabase.com).
+2. Open the **SQL Editor** in your Supabase dashboard.
+3. Paste and run the contents of [`supabase-schema.sql`](./supabase-schema.sql).
+4. Add the following to your `.env.local` or Vercel Environment Variables:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+```
+*(Note: If Supabase keys are not set, the app will seamlessly run from its pre-loaded Vadodara dataset).*
