@@ -6,7 +6,7 @@ export default function Header({ onAddClick }) {
       <div className="header-inner">
         <a href="/" className="logo" aria-label="TripG Home">
           <div className="logo-icon">
-            <Compass size={22} color="white" />
+            <Compass size={22} color="white" strokeWidth={2.5} />
           </div>
           <div className="logo-text-group">
             <span className="logo-text">TripG</span>
@@ -20,9 +20,9 @@ export default function Header({ onAddClick }) {
             className="btn btn-primary"
             onClick={onAddClick}
             aria-label="Add New Destination"
-            style={{ padding: '0.45rem 0.95rem', fontSize: '0.82rem' }}
+            style={{ padding: '0.5rem 1rem', fontSize: '0.84rem' }}
           >
-            <Plus size={16} />
+            <Plus size={17} strokeWidth={2.5} />
             <span>Add Stop</span>
           </button>
         </div>
