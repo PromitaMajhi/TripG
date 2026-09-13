@@ -40,3 +40,6 @@ export const updateSession = (request: NextRequest) => {
 
   return supabaseResponse;
 };
+
+export const createClient = updateSession;
+

@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Destination {
+  id          String   @id @default(uuid())
+  name        String
+  category    String   @default("Tourist Spot")
+  rating      Float    @default(4.5)
+  reviews     Int      @default(0)
+  price       String   @default("Free")
+  image       String
+  description String
+  features    String[]
+  timings     String   @default("9:00 AM - 6:00 PM")
+  location    String   @default("Vadodara, Gujarat")
+  lat         Float?
+  lng         Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

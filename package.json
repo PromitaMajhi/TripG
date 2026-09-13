@@ -10,6 +10,7 @@
     "vercel-build": "next build"
   },
   "dependencies": {
+    "@prisma/client": "^6.4.1",
     "@supabase/server": "^1.6.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",
@@ -26,6 +27,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "postcss": "^8.5.3",
+    "prisma": "^6.4.1",
     "tailwindcss": "^4.0.9",
     "typescript": "^5.8.2"
   }
