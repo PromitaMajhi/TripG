@@ -11,7 +11,15 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  await connectDB();
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'ডেটাবেজ কানেক্ট করা যায়নি: ' + err.message,
+    });
+  }
 
   // GET all destinations
   if (req.method === 'GET') {
