@@ -8,6 +8,7 @@ import DestinationCard from '@/components/DestinationCard';
 import DestinationModal from '@/components/DestinationModal';
 import BottomNav from '@/components/BottomNav';
 import ParticleGlow from '@/components/ParticleGlow';
+import RouteStepper from '@/components/RouteStepper';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -24,6 +25,11 @@ import {
   Milestone,
   ArrowRight,
   X,
+  Navigation,
+  Layers,
+  Route as RouteIcon,
+  PhoneCall,
+  ShieldAlert,
 } from 'lucide-react';
 
 const FILTER_TABS = [
@@ -44,6 +50,8 @@ export default function HomePage() {
   const [editingItem, setEditingItem] = useState<Destination | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [viewMode, setViewMode] = useState<'cards' | 'timeline'>('cards');
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -56,7 +64,6 @@ export default function HomePage() {
         const sorted = [...data.data].sort((a, b) => (a.stop_number || 0) - (b.stop_number || 0));
         setDestinations(sorted);
       } else {
-        // Fallback to embedded destinations
         setDestinations(INITIAL_DESTINATIONS);
       }
     } catch (err) {
@@ -132,7 +139,6 @@ export default function HomePage() {
   // TOGGLE VISITED
   const handleToggleVisited = async (destination: Destination) => {
     const newVisited = !destination.visited;
-    // Optimistic local update
     setDestinations((prev) =>
       prev.map((d) => (d.id === destination.id ? { ...d, visited: newVisited } : d))
     );
@@ -145,9 +151,8 @@ export default function HomePage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(newVisited ? 'Marked as Visited!' : 'Marked as To Visit');
+        toast.success(newVisited ? '🎉 Marked as Visited!' : 'Marked as To Visit');
       } else {
-        // Revert on error
         setDestinations((prev) =>
           prev.map((d) => (d.id === destination.id ? { ...d, visited: !newVisited } : d))
         );
@@ -180,7 +185,7 @@ export default function HomePage() {
       },
       () => {
         toast.dismiss(toastId);
-        toast('Device location unavailable. Opening destination directly on Google Maps.');
+        toast('Opening destination directly on Google Maps.');
         const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`;
         window.open(fallbackUrl, '_blank');
       },
@@ -231,9 +236,17 @@ export default function HomePage() {
 
   const visitedCount = destinations.filter((d) => d.visited).length;
   const pendingCount = destinations.length - visitedCount;
+  const progressPercent =
+    destinations.length > 0 ? Math.round((visitedCount / destinations.length) * 100) : 0;
+
+  // Identify next unvisited stop
+  const sortedStops = [...destinations].sort(
+    (a, b) => (a.stop_number || 0) - (b.stop_number || 0)
+  );
+  const nextTargetStop = sortedStops.find((d) => !d.visited) || sortedStops[0];
 
   return (
-    <div className="app-container relative z-10">
+    <div className="app-container relative z-10 min-h-screen pb-20 md:pb-8">
       {/* Dynamic Ambient Background Glow */}
       <ParticleGlow />
 
@@ -241,21 +254,21 @@ export default function HomePage() {
       <Header onAddClick={handleAdd} />
 
       {/* Hero Section */}
-      <section className="relative pt-10 pb-8 px-4 text-center border-b border-pink-500/15 overflow-hidden">
-        <div className="max-w-4xl mx-auto space-y-4">
+      <section className="relative pt-6 sm:pt-10 pb-6 px-4 text-center border-b border-pink-500/15 overflow-hidden">
+        <div className="max-w-4xl mx-auto space-y-3.5">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-pink-500/15 border border-pink-500/35 text-pink-300 text-xs font-bold shadow-[0_4px_14px_rgba(255,46,147,0.2)]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-pink-500/15 border border-pink-500/35 text-pink-300 text-xs font-bold shadow-[0_4px_14px_rgba(255,46,147,0.2)]">
             <Milestone className="w-3.5 h-3.5" />
-            <span>Vadodara Tour Route Guide</span>
+            <span>Vadodara Darshan 11 Stops</span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-pink-200 to-pink-500 bg-clip-text text-transparent leading-tight">
-            Vadodara Darshan Tour
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-pink-200 to-pink-500 bg-clip-text text-transparent leading-tight">
+            Vadodara Tour Navigator
           </h1>
 
           {/* 3D Route Flow Pill */}
-          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-5 py-2 rounded-full bg-[#180e30]/80 border border-pink-500/30 text-xs font-bold text-white shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_15px_rgba(255,46,147,0.2)] backdrop-blur-md">
+          <div className="hidden sm:inline-flex flex-wrap items-center justify-center gap-2 px-5 py-2 rounded-full bg-[#180e30]/80 border border-pink-500/30 text-xs font-bold text-white shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_15px_rgba(255,46,147,0.2)] backdrop-blur-md">
             <span>Parul Univ</span>
             <ArrowRight className="w-3 h-3 text-pink-400" />
             <span>Manjalpur</span>
@@ -267,12 +280,78 @@ export default function HomePage() {
             <span>Kishanwadi</span>
           </div>
 
-          <p className="text-sm text-neutral-300 max-w-lg mx-auto leading-relaxed">
-            Explore all 11 sacred destinations with live turn-by-turn Google Maps GPS navigation.
-          </p>
+          {/* Mobile-First Sticky "Next Target Stop" Quick Navigator Card */}
+          {nextTargetStop && (
+            <div className="max-w-md mx-auto p-4 rounded-2xl bg-gradient-to-br from-[#241038] via-[#1a0c2c] to-[#120820] border border-pink-500/40 shadow-[0_10px_30px_rgba(255,46,147,0.25)] text-left space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[11px] font-black uppercase tracking-wider text-pink-400">
+                    Next Target Stop
+                  </span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                  Stop #{nextTargetStop.stop_number}
+                </span>
+              </div>
 
-          {/* 3D Search Bar */}
-          <div className="max-w-md mx-auto pt-2">
+              <div>
+                <h3 className="text-base font-bold text-white tracking-tight leading-snug">
+                  {nextTargetStop.name}
+                </h3>
+                <p className="text-xs text-neutral-300/80 line-clamp-1 pt-0.5">
+                  📍 {nextTargetStop.location}
+                </p>
+                {nextTargetStop.distance && (
+                  <p className="text-[11px] font-semibold text-pink-400 pt-0.5">
+                    🚗 {nextTargetStop.distance}
+                  </p>
+                )}
+              </div>
+
+              {/* Progress Bar */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-bold">
+                  <span className="text-neutral-400">Tour Progress</span>
+                  <span className="text-pink-300">
+                    {visitedCount} of {destinations.length} Stops ({progressPercent}%)
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-black/40 overflow-hidden border border-white/5">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.8 }}
+                    className="h-full bg-gradient-to-r from-pink-500 via-rose-400 to-emerald-400 shadow-[0_0_12px_rgba(255,46,147,0.8)]"
+                  />
+                </div>
+              </div>
+
+              {/* Quick Action Buttons */}
+              <div className="flex items-center gap-2 pt-1">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => handleNavigate(nextTargetStop)}
+                  className="flex-1 py-2.5 px-3 rounded-xl btn-3d-map flex items-center justify-center gap-2 text-xs font-bold text-white shadow-md cursor-pointer"
+                >
+                  <Navigation className="w-3.5 h-3.5" />
+                  <span>Navigate Now</span>
+                </motion.button>
+
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => handleToggleVisited(nextTargetStop)}
+                  className="py-2.5 px-3 rounded-xl text-xs font-bold border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Mark Done</span>
+                </motion.button>
+              </div>
+            </div>
+          )}
+
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto pt-1">
             <div className="flex items-center gap-3 px-4 py-3 rounded-full bg-[#180e30] border border-pink-500/25 shadow-[0_8px_28px_rgba(0,0,0,0.5)] focus-within:border-pink-500 focus-within:ring-2 focus-within:ring-pink-500/20 transition-all">
               <Search className="w-4 h-4 text-pink-400 shrink-0" />
               <input
@@ -295,22 +374,22 @@ export default function HomePage() {
           </div>
 
           {/* Interactive Stat Counters */}
-          <div className="grid grid-cols-3 gap-3 max-w-md mx-auto pt-3">
+          <div className="grid grid-cols-3 gap-2.5 max-w-md mx-auto pt-2">
             <motion.div
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => setActiveFilter('all')}
-              className={`p-3 rounded-2xl border text-center cursor-pointer transition-all ${
+              className={`p-2.5 rounded-xl border text-center cursor-pointer transition-all ${
                 activeFilter === 'all'
                   ? 'bg-pink-500/20 border-pink-500 shadow-[0_0_20px_rgba(255,46,147,0.35)]'
                   : 'bg-[#180e30]/80 border-white/10 hover:border-pink-500/30'
               }`}
             >
-              <div className="text-2xl font-black bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">
+              <div className="text-xl sm:text-2xl font-black bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">
                 {destinations.length}
               </div>
               <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider pt-0.5">
-                Total Stops
+                Total
               </div>
             </motion.div>
 
@@ -318,13 +397,13 @@ export default function HomePage() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => setActiveFilter('visited')}
-              className={`p-3 rounded-2xl border text-center cursor-pointer transition-all ${
+              className={`p-2.5 rounded-xl border text-center cursor-pointer transition-all ${
                 activeFilter === 'visited'
                   ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.35)]'
                   : 'bg-[#180e30]/80 border-white/10 hover:border-emerald-500/30'
               }`}
             >
-              <div className="text-2xl font-black text-emerald-400">{visitedCount}</div>
+              <div className="text-xl sm:text-2xl font-black text-emerald-400">{visitedCount}</div>
               <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider pt-0.5">
                 Visited
               </div>
@@ -334,13 +413,13 @@ export default function HomePage() {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => setActiveFilter('pending')}
-              className={`p-3 rounded-2xl border text-center cursor-pointer transition-all ${
+              className={`p-2.5 rounded-xl border text-center cursor-pointer transition-all ${
                 activeFilter === 'pending'
                   ? 'bg-pink-500/20 border-pink-500 shadow-[0_0_20px_rgba(255,46,147,0.35)]'
                   : 'bg-[#180e30]/80 border-white/10 hover:border-pink-500/30'
               }`}
             >
-              <div className="text-2xl font-black text-pink-400">{pendingCount}</div>
+              <div className="text-xl sm:text-2xl font-black text-pink-400">{pendingCount}</div>
               <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider pt-0.5">
                 To Visit
               </div>
@@ -349,85 +428,145 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Filter Tabs Section */}
-      <section className="max-w-6xl mx-auto px-4 pt-6 pb-2 w-full">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {FILTER_TABS.map((tab) => {
-            const TabIcon = tab.Icon;
-            const isActive = activeFilter === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveFilter(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'btn-3d-pink text-white border-white/20'
-                    : 'bg-[#180e30] text-neutral-400 border-white/10 hover:border-pink-500/40 hover:text-white'
-                }`}
-              >
-                <TabIcon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
+      {/* Mobile Toolbar & View Switcher (Cards vs Route Stepper) */}
+      <section className="max-w-6xl mx-auto px-4 pt-4 pb-2 w-full flex flex-col sm:flex-row items-center justify-between gap-3">
+        {/* View Mode Toggle */}
+        <div className="flex items-center p-1 rounded-xl bg-[#180e30] border border-pink-500/30 w-full sm:w-auto shadow-md">
+          <button
+            onClick={() => setViewMode('cards')}
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              viewMode === 'cards'
+                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Card Feed</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('timeline')}
+            className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              viewMode === 'timeline'
+                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            <RouteIcon className="w-3.5 h-3.5" />
+            <span>Route Roadmap</span>
+          </button>
         </div>
+
+        {/* Emergency Help Button */}
+        <button
+          onClick={() => setHelpModalOpen(true)}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-500/25 transition-colors cursor-pointer"
+        >
+          <PhoneCall className="w-3.5 h-3.5" />
+          <span>Vadodara Emergency Helplines</span>
+        </button>
       </section>
 
-      {/* Destination Grid */}
-      <main className="max-w-6xl mx-auto px-4 py-6 w-full flex-1">
-        <div className="flex items-center justify-between pb-4">
-          <h2 className="text-xl font-bold text-white tracking-tight">
-            {activeFilter === 'all'
-              ? 'All Tour Destinations'
-              : activeFilter === 'visited'
-              ? 'Visited Stops'
-              : activeFilter === 'pending'
-              ? 'Remaining Stops to Visit'
-              : `${FILTER_TABS.find((t) => t.id === activeFilter)?.label || ''} Stops`}
-          </h2>
-          <span className="text-xs font-bold px-3 py-1 rounded-full bg-pink-500/15 border border-pink-500/30 text-pink-300">
-            {filtered.length} Stops
-          </span>
-        </div>
-
-        {loading ? (
-          <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3">
-            <div className="w-10 h-10 border-3 border-pink-500/20 border-t-pink-500 rounded-full animate-spin shadow-[0_0_20px_rgba(255,46,147,0.4)]" />
-            <p className="text-sm font-semibold text-neutral-400">Loading Vadodara tour stops...</p>
+      {/* Filter Tabs Section (Only in Card view) */}
+      {viewMode === 'cards' && (
+        <section className="max-w-6xl mx-auto px-4 pt-2 pb-2 w-full">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {FILTER_TABS.map((tab) => {
+              const TabIcon = tab.Icon;
+              const isActive = activeFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFilter(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border shrink-0 cursor-pointer ${
+                    isActive
+                      ? 'btn-3d-pink text-white border-white/20'
+                      : 'bg-[#180e30] text-neutral-400 border-white/10 hover:border-pink-500/40 hover:text-white'
+                  }`}
+                >
+                  <TabIcon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16 px-4 bg-[#180e30]/50 border border-dashed border-pink-500/25 rounded-3xl max-w-lg mx-auto space-y-4">
-            <div className="w-14 h-14 rounded-full bg-pink-500/15 border border-pink-500/35 flex items-center justify-center mx-auto text-pink-400 shadow-[0_0_25px_rgba(255,46,147,0.3)]">
-              <Compass className="w-7 h-7" />
+        </section>
+      )}
+
+      {/* Main Content Area */}
+      <main className="max-w-6xl mx-auto px-4 py-4 w-full flex-1">
+        {viewMode === 'timeline' ? (
+          <div>
+            <div className="flex items-center justify-between pb-3 px-2">
+              <h2 className="text-lg font-bold text-white">Step-by-Step Route Roadmap</h2>
+              <span className="text-xs text-pink-400 font-semibold">11 Connected Stops</span>
             </div>
-            <h3 className="text-lg font-bold text-white">No destinations found</h3>
-            <p className="text-xs text-neutral-400">
-              {searchQuery
-                ? `No tour stops match "${searchQuery}".`
-                : 'No destinations found in this filter category.'}
-            </p>
-            <button
-              onClick={handleAdd}
-              className="btn-3d-pink px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-2 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Stop</span>
-            </button>
+            <RouteStepper
+              destinations={destinations}
+              onNavigate={handleNavigate}
+              onToggleVisited={handleToggleVisited}
+              onSelect={handleEdit}
+            />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence mode="popLayout">
-              {filtered.map((dest) => (
-                <DestinationCard
-                  key={dest.id}
-                  destination={dest}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onToggleVisited={handleToggleVisited}
-                  onNavigate={handleNavigate}
-                />
-              ))}
-            </AnimatePresence>
+          <div>
+            <div className="flex items-center justify-between pb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                {activeFilter === 'all'
+                  ? 'All Tour Destinations'
+                  : activeFilter === 'visited'
+                  ? 'Visited Stops'
+                  : activeFilter === 'pending'
+                  ? 'Remaining Stops to Visit'
+                  : `${FILTER_TABS.find((t) => t.id === activeFilter)?.label || ''} Stops`}
+              </h2>
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-pink-500/15 border border-pink-500/30 text-pink-300">
+                {filtered.length} Stops
+              </span>
+            </div>
+
+            {loading ? (
+              <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3">
+                <div className="w-10 h-10 border-3 border-pink-500/20 border-t-pink-500 rounded-full animate-spin shadow-[0_0_20px_rgba(255,46,147,0.4)]" />
+                <p className="text-sm font-semibold text-neutral-400">
+                  Loading Vadodara tour stops...
+                </p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-16 px-4 bg-[#180e30]/50 border border-dashed border-pink-500/25 rounded-3xl max-w-lg mx-auto space-y-4">
+                <div className="w-14 h-14 rounded-full bg-pink-500/15 border border-pink-500/35 flex items-center justify-center mx-auto text-pink-400 shadow-[0_0_25px_rgba(255,46,147,0.3)]">
+                  <Compass className="w-7 h-7" />
+                </div>
+                <h3 className="text-lg font-bold text-white">No destinations found</h3>
+                <p className="text-xs text-neutral-400">
+                  {searchQuery
+                    ? `No tour stops match "${searchQuery}".`
+                    : 'No destinations found in this filter category.'}
+                </p>
+                <button
+                  onClick={handleAdd}
+                  className="btn-3d-pink px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Stop</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <AnimatePresence mode="popLayout">
+                  {filtered.map((dest) => (
+                    <DestinationCard
+                      key={dest.id}
+                      destination={dest}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      onToggleVisited={handleToggleVisited}
+                      onNavigate={handleNavigate}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -462,6 +601,73 @@ export default function HomePage() {
         onSave={handleSave}
         editingItem={editingItem}
       />
+
+      {/* Emergency Assistance Modal */}
+      {helpModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-sm rounded-3xl bg-gradient-to-b from-[#25103a] to-[#140a24] border border-pink-500/40 p-6 shadow-2xl space-y-4"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-rose-400 font-bold">
+                <ShieldAlert className="w-5 h-5" />
+                <span>Vadodara Emergency Helplines</span>
+              </div>
+              <button
+                onClick={() => setHelpModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-neutral-300 leading-relaxed">
+              In case of emergency during your tour in Vadodara, tap any number to call immediately:
+            </p>
+
+            <div className="space-y-2 text-sm font-semibold">
+              <a
+                href="tel:112"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 text-white"
+              >
+                <span>Police / National Emergency</span>
+                <span className="text-pink-400 font-bold">112</span>
+              </a>
+              <a
+                href="tel:1095"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 text-white"
+              >
+                <span>Vadodara Traffic Helpline</span>
+                <span className="text-pink-400 font-bold">1095</span>
+              </a>
+              <a
+                href="tel:108"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 text-white"
+              >
+                <span>Ambulance (Gujarat Emergency)</span>
+                <span className="text-emerald-400 font-bold">108</span>
+              </a>
+              <a
+                href="tel:02652433111"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 text-white"
+              >
+                <span>Vadodara Municipal Corp (VMC)</span>
+                <span className="text-pink-400 text-xs">0265-2433111</span>
+              </a>
+            </div>
+
+            <button
+              onClick={() => setHelpModalOpen(false)}
+              className="w-full py-2.5 rounded-xl btn-3d-pink text-xs font-bold text-white shadow-md cursor-pointer"
+            >
+              Close
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
