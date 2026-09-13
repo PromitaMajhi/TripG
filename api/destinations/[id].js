@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     console.error('MongoDB connection error:', err);
     return res.status(500).json({
       success: false,
-      error: 'ডেটাবেজ কানেক্ট করা যায়নি: ' + err.message,
+      error: 'Database connection failed: ' + err.message,
     });
   }
 
