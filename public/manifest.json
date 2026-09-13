@@ -1,0 +1,17 @@
+{
+  "name": "TripG — Vadodara Tour & Route Navigator",
+  "short_name": "TripG",
+  "description": "Vadodara Darshan tour guide with live turn-by-turn Google Maps GPS navigation",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0614",
+  "theme_color": "#0a0614",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
