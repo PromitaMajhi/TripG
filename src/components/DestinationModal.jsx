@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { X, MapPin, Crosshair, Loader } from 'lucide-react';
+import { X, MapPin, Crosshair, Loader, MapPin as LocationPin } from 'lucide-react';
 
 const CATEGORIES = [
-  { value: 'manjalpur', label: '📍 Manjalpur Side' },
-  { value: 'old-city', label: '🏛️ Old City (Mangal / Nava Bazar)' },
-  { value: 'bajwada', label: '🛕 Bajwada Side' },
-  { value: 'navapura', label: '🏘️ Navapura Side' },
-  { value: 'kishanwadi', label: '⭐ Kishanwadi Side' },
-  { value: 'darshan', label: '🙏 Ganesh Darshan' },
-  { value: 'other', label: '📍 Other Location' },
+  { value: 'manjalpur', label: 'Manjalpur Side' },
+  { value: 'old-city', label: 'Old City (Mangal / Nava Bazar)' },
+  { value: 'bajwada', label: 'Bajwada Side' },
+  { value: 'navapura', label: 'Navapura Side' },
+  { value: 'kishanwadi', label: 'Kishanwadi Side' },
+  { value: 'darshan', label: 'Ganesh Darshan' },
+  { value: 'other', label: 'Other Location' },
 ];
 
 const EMPTY_FORM = {
@@ -89,7 +89,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
         }));
         setGettingLocation(false);
       },
-      (err) => {
+      () => {
         alert('Could not get GPS location. Please ensure location services are enabled on your device.');
         setGettingLocation(false);
       },
@@ -124,7 +124,8 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
 
         <div className="modal-header">
           <h2 className="modal-title" id="modal-title">
-            {isEditing ? '✏️ Edit Destination' : '✨ Add Tour Destination'}
+            <MapPin size={20} />
+            {isEditing ? 'Edit Destination' : 'Add Tour Destination'}
           </h2>
           <button
             id="close-modal-btn"
@@ -154,9 +155,9 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
               />
             </div>
 
-            {/* Category / Zone */}
+            {/* Category */}
             <div className="form-group">
-              <label className="form-label" htmlFor="dest-category">Zone / Category</label>
+              <label className="form-label" htmlFor="dest-category">Zone</label>
               <select
                 id="dest-category"
                 name="category"
@@ -201,7 +202,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
               {errors.location && <span className="form-error">{errors.location}</span>}
             </div>
 
-            {/* Distance Info */}
+            {/* Distance */}
             <div className="form-group full-width">
               <label className="form-label" htmlFor="dest-dist">Distance from Previous Stop</label>
               <input
@@ -215,17 +216,17 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
               />
             </div>
 
-            {/* GPS Auto Detect Header */}
-            <div className="form-group full-width" style={{ marginTop: '0.2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                <span className="form-label" style={{ margin: 0 }}>Map GPS Coordinates *</span>
+            {/* GPS Header Row */}
+            <div className="form-group full-width" style={{ marginTop: '0.1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                <span className="form-label" style={{ margin: 0 }}>GPS Coordinates *</span>
                 <button
                   id="get-location-btn"
                   type="button"
                   className="gps-btn"
                   onClick={handleGetCurrentLocation}
                   disabled={gettingLocation}
-                  title="Detect current device coordinates"
+                  title="Detect current device GPS coordinates"
                 >
                   {gettingLocation ? (
                     <Loader size={13} className="spinning" />
@@ -270,7 +271,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
             </div>
 
             {/* Visited Toggle */}
-            <div className="form-group full-width" style={{ padding: '0.25rem 0' }}>
+            <div className="form-group full-width" style={{ padding: '0.2rem 0' }}>
               <label className="form-label">Visited Status</label>
               <label className="toggle-wrapper">
                 <input
@@ -282,7 +283,9 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 <div className={`toggle-track ${form.visited ? 'on' : ''}`}>
                   <div className={`toggle-thumb ${form.visited ? 'on' : ''}`} />
                 </div>
-                <span className="toggle-label">{form.visited ? '✅ Visited' : '📌 To Visit'}</span>
+                <span className="toggle-label">
+                  {form.visited ? 'Visited' : 'To Visit'}
+                </span>
               </label>
             </div>
 
@@ -293,7 +296,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 id="dest-desc"
                 name="description"
                 className="form-textarea"
-                placeholder="Details about this mandir, specialty, timings, or route tips..."
+                placeholder="Details about this destination, highlights, or route tips..."
                 value={form.description}
                 onChange={handleChange}
                 rows={3}
@@ -338,7 +341,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 </>
               ) : (
                 <>
-                  <MapPin size={16} />
+                  <LocationPin size={16} />
                   <span>{isEditing ? 'Update Stop' : 'Add Stop'}</span>
                 </>
               )}
