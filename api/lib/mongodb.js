@@ -1,15 +1,5 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  process.env.MONGODB_URL ||
-  process.env.DATABASE_URL ||
-  process.env.STORAGE_URL;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable in Vercel settings');
-}
-
 let cached = global.mongoose;
 
 if (!cached) {
@@ -17,6 +7,16 @@ if (!cached) {
 }
 
 async function connectDB() {
+  const MONGODB_URI =
+    process.env.MONGODB_URI ||
+    process.env.MONGODB_URL ||
+    process.env.DATABASE_URL ||
+    process.env.STORAGE_URL;
+
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable in Vercel settings');
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
