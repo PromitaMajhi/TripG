@@ -1,4 +1,4 @@
-import { MapPin, Navigation, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
+import { MapPin, Navigation, Edit3, Trash2, CheckCircle2, Circle } from 'lucide-react';
 
 const CATEGORY_EMOJIS = {
   beach: '🏖️',
@@ -11,10 +11,10 @@ const CATEGORY_EMOJIS = {
 };
 
 const CATEGORY_LABELS = {
-  beach: 'সমুদ্র',
+  beach: 'সমুদ্র সৈকত',
   mountain: 'পাহাড়',
-  forest: 'বন',
-  heritage: 'ঐতিহ্য',
+  forest: 'বন/জঙ্গল',
+  heritage: 'ঐতিহাসিক',
   city: 'শহর',
   island: 'দ্বীপ',
   other: 'অন্যান্য',
@@ -38,7 +38,7 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
 
   return (
     <article className="card">
-      {/* Image */}
+      {/* Image and badges */}
       <div className="card-image-wrapper">
         {imageUrl ? (
           <img
@@ -48,7 +48,9 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
             loading="lazy"
             onError={(e) => {
               e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
+              if (e.target.nextElementSibling) {
+                e.target.nextElementSibling.style.display = 'flex';
+              }
             }}
           />
         ) : null}
@@ -59,6 +61,8 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
           {emoji}
         </div>
 
+        <div className="card-image-overlay" />
+
         {/* Category badge */}
         <span className={`card-category-badge cat-${category}`}>
           {emoji} {label}
@@ -66,75 +70,86 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
 
         {/* Visited badge */}
         {visited && (
-          <span className="card-visited-badge">✓ গিয়েছি</span>
+          <span className="card-visited-badge">
+            ✓ ভ্রমণ সম্পন্ন
+          </span>
         )}
       </div>
 
-      {/* Body */}
+      {/* Body content */}
       <div className="card-body">
         <div className="card-header">
           <h3 className="card-name">{name}</h3>
           <div className="card-menu">
             <button
-              id={`toggle-visited-${_id}`}
-              className="btn btn-ghost btn-icon"
-              onClick={() => onToggleVisited(destination)}
-              title={visited ? 'না গেলে চিহ্নিত করো' : 'গিয়েছি চিহ্নিত করো'}
-            >
-              {visited ? (
-                <Eye size={15} color="var(--accent-secondary)" />
-              ) : (
-                <EyeOff size={15} />
-              )}
-            </button>
-            <button
               id={`edit-${_id}`}
               className="btn btn-ghost btn-icon"
               onClick={() => onEdit(destination)}
-              title="সম্পাদনা"
+              title="সম্পাদনা করুন"
+              aria-label="সম্পাদনা"
             >
-              <Edit2 size={14} />
+              <Edit3 size={16} />
             </button>
             <button
               id={`delete-${_id}`}
               className="btn btn-ghost btn-icon"
               onClick={() => onDelete(_id)}
-              title="মুছে ফেলো"
+              title="মুছে ফেলুন"
+              aria-label="মুছে ফেলুন"
               style={{ color: 'var(--accent-coral)' }}
             >
-              <Trash2 size={14} />
+              <Trash2 size={16} />
             </button>
           </div>
         </div>
 
         <div className="card-location">
-          <MapPin size={13} />
-          {location}
+          <MapPin size={14} />
+          <span>{location}</span>
         </div>
 
         {description && (
           <p className="card-description">{description}</p>
         )}
 
-        <div className="card-coords">
-          <span className="coord-item">
-            <MapPin size={10} />
-            {latitude?.toFixed(4)}°N
-          </span>
-          <span className="coord-item">
-            {longitude?.toFixed(4)}°E
-          </span>
+        {/* Meta row: Coordinates + Quick Visited Toggle */}
+        <div className="card-meta-row">
+          <div className="card-coords">
+            <span className="coord-item">
+              📍 {latitude?.toFixed(3)}°, {longitude?.toFixed(3)}°
+            </span>
+          </div>
+
+          <button
+            id={`toggle-visited-${_id}`}
+            className={`card-visited-toggle-btn ${visited ? 'active' : ''}`}
+            onClick={() => onToggleVisited(destination)}
+            title={visited ? 'ভ্রমণ চিহ্নিত সরানো' : 'ভ্রমণ সম্পন্ন চিহ্নিত করো'}
+          >
+            {visited ? (
+              <>
+                <CheckCircle2 size={14} />
+                <span>গিয়েছি</span>
+              </>
+            ) : (
+              <>
+                <Circle size={14} />
+                <span>যাবো</span>
+              </>
+            )}
+          </button>
         </div>
 
-        {/* Map / Navigate button */}
+        {/* Full-width Touch-Friendly Map / Navigation Button */}
         <div className="card-actions">
           <button
             id={`navigate-${_id}`}
             className="btn btn-map"
             onClick={() => onNavigate(destination)}
+            aria-label={`${name} এর দিকে গুগল ম্যাপ নেভিগেশন চালু করো`}
           >
-            <Navigation size={15} />
-            মানচিত্রে দেখো
+            <Navigation size={18} />
+            <span>মানচিত্রে সরাসরি নেভিগেট করো</span>
           </button>
         </div>
       </div>
