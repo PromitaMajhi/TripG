@@ -2,23 +2,25 @@ import { useState, useEffect } from 'react';
 import { X, MapPin, Crosshair, Loader } from 'lucide-react';
 
 const CATEGORIES = [
-  { value: 'beach', label: '🏖️ সমুদ্র সৈকত' },
-  { value: 'mountain', label: '⛰️ পাহাড়' },
-  { value: 'forest', label: '🌿 বন/জঙ্গল' },
-  { value: 'heritage', label: '🏛️ ঐতিহাসিক স্থান' },
-  { value: 'city', label: '🏙️ শহর' },
-  { value: 'island', label: '🏝️ দ্বীপ' },
-  { value: 'other', label: '📍 অন্যান্য' },
+  { value: 'manjalpur', label: '📍 Manjalpur Side' },
+  { value: 'old-city', label: '🏛️ Old City (Mangal / Nava Bazar)' },
+  { value: 'bajwada', label: '🛕 Bajwada Side' },
+  { value: 'navapura', label: '🏘️ Navapura Side' },
+  { value: 'kishanwadi', label: '⭐ Kishanwadi Side' },
+  { value: 'darshan', label: '🙏 Ganesh Darshan' },
+  { value: 'other', label: '📍 Other Location' },
 ];
 
 const EMPTY_FORM = {
+  stopNumber: 1,
   name: '',
   location: '',
+  distance: '',
   description: '',
   latitude: '',
   longitude: '',
   imageUrl: '',
-  category: 'other',
+  category: 'manjalpur',
   visited: false,
 };
 
@@ -31,13 +33,15 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
   useEffect(() => {
     if (editingItem) {
       setForm({
+        stopNumber: editingItem.stopNumber || 1,
         name: editingItem.name || '',
         location: editingItem.location || '',
+        distance: editingItem.distance || '',
         description: editingItem.description || '',
         latitude: editingItem.latitude || '',
         longitude: editingItem.longitude || '',
         imageUrl: editingItem.imageUrl || '',
-        category: editingItem.category || 'other',
+        category: editingItem.category || 'manjalpur',
         visited: editingItem.visited || false,
       });
     } else {
@@ -56,15 +60,15 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
 
   const validate = () => {
     const newErrors = {};
-    if (!form.name.trim()) newErrors.name = 'গন্তব্যের নাম দিন';
-    if (!form.location.trim()) newErrors.location = 'স্থান বা জেলা উল্লেখ করুন';
-    if (!form.latitude) newErrors.latitude = 'Latitude প্রয়োজন';
-    if (!form.longitude) newErrors.longitude = 'Longitude প্রয়োজন';
+    if (!form.name.trim()) newErrors.name = 'Destination name is required';
+    if (!form.location.trim()) newErrors.location = 'Location / Area is required';
+    if (!form.latitude) newErrors.latitude = 'Latitude is required';
+    if (!form.longitude) newErrors.longitude = 'Longitude is required';
     if (form.latitude && (isNaN(form.latitude) || form.latitude < -90 || form.latitude > 90)) {
-      newErrors.latitude = 'সঠিক Latitude দিন (-90 থেকে 90)';
+      newErrors.latitude = 'Enter a valid Latitude (-90 to 90)';
     }
     if (form.longitude && (isNaN(form.longitude) || form.longitude < -180 || form.longitude > 180)) {
-      newErrors.longitude = 'সঠিক Longitude দিন (-180 থেকে 180)';
+      newErrors.longitude = 'Enter a valid Longitude (-180 to 180)';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -72,7 +76,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
 
   const handleGetCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert('আপনার ডিভাইসের ব্রাউজার লোকেশন সাপোর্ট করে না।');
+      alert('Geolocation is not supported by your browser.');
       return;
     }
     setGettingLocation(true);
@@ -86,7 +90,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
         setGettingLocation(false);
       },
       (err) => {
-        alert('লোকেশন পাওয়া যায়নি। ফোনের GPS ও পারমিশন অন আছে কিনা চেক করুন।');
+        alert('Could not get GPS location. Please ensure location services are enabled on your device.');
         setGettingLocation(false);
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -99,6 +103,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
     setSaving(true);
     await onSave({
       ...form,
+      stopNumber: Number(form.stopNumber) || 1,
       latitude: parseFloat(form.latitude),
       longitude: parseFloat(form.longitude),
     });
@@ -114,18 +119,18 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
       role="presentation"
     >
       <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        {/* Mobile drag handle bar */}
+        {/* Mobile Drag Handle Bar */}
         <div className="sheet-handle-bar" />
 
         <div className="modal-header">
           <h2 className="modal-title" id="modal-title">
-            {isEditing ? '✏️ গন্তব্য সম্পাদনা' : '✨ নতুন গন্তব্য যোগ'}
+            {isEditing ? '✏️ Edit Destination' : '✨ Add Tour Destination'}
           </h2>
           <button
             id="close-modal-btn"
             className="btn btn-ghost btn-icon"
             onClick={onClose}
-            aria-label="বন্ধ করুন"
+            aria-label="Close"
           >
             <X size={20} />
           </button>
@@ -133,15 +138,47 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
 
         <form className="modal-body" onSubmit={handleSubmit} noValidate>
           <div className="form-grid">
+            {/* Stop Number */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="dest-stop">Tour Stop #</label>
+              <input
+                id="dest-stop"
+                type="number"
+                name="stopNumber"
+                min="1"
+                max="99"
+                className="form-input"
+                placeholder="1"
+                value={form.stopNumber}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Category / Zone */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="dest-category">Zone / Category</label>
+              <select
+                id="dest-category"
+                name="category"
+                className="form-select"
+                value={form.category}
+                onChange={handleChange}
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+
             {/* Name */}
             <div className="form-group full-width">
-              <label className="form-label" htmlFor="dest-name">গন্তব্যের নাম *</label>
+              <label className="form-label" htmlFor="dest-name">Destination Name *</label>
               <input
                 id="dest-name"
                 type="text"
                 name="name"
                 className="form-input"
-                placeholder="যেমন: সেন্টমার্টিন দ্বীপ"
+                placeholder="e.g. Manjalpur Na Raja"
                 value={form.name}
                 onChange={handleChange}
                 autoFocus
@@ -151,37 +188,51 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
 
             {/* Location */}
             <div className="form-group full-width">
-              <label className="form-label" htmlFor="dest-location">জেলা / অবস্থান *</label>
+              <label className="form-label" htmlFor="dest-location">Location / Area *</label>
               <input
                 id="dest-location"
                 type="text"
                 name="location"
                 className="form-input"
-                placeholder="যেমন: কক্সবাজার, চট্টগ্রাম"
+                placeholder="e.g. Manjalpur, Vadodara"
                 value={form.location}
                 onChange={handleChange}
               />
               {errors.location && <span className="form-error">{errors.location}</span>}
             </div>
 
-            {/* GPS Auto Detect Banner */}
+            {/* Distance Info */}
+            <div className="form-group full-width">
+              <label className="form-label" htmlFor="dest-dist">Distance from Previous Stop</label>
+              <input
+                id="dest-dist"
+                type="text"
+                name="distance"
+                className="form-input"
+                placeholder="e.g. ~2–3 km from previous stop"
+                value={form.distance}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* GPS Auto Detect Header */}
             <div className="form-group full-width" style={{ marginTop: '0.2rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                <span className="form-label" style={{ margin: 0 }}>ম্যাপ কোঅর্ডিনেট (GPS) *</span>
+                <span className="form-label" style={{ margin: 0 }}>Map GPS Coordinates *</span>
                 <button
                   id="get-location-btn"
                   type="button"
                   className="gps-btn"
                   onClick={handleGetCurrentLocation}
                   disabled={gettingLocation}
-                  title="আমার বর্তমান GPS লোকেশন সেট করো"
+                  title="Detect current device coordinates"
                 >
                   {gettingLocation ? (
                     <Loader size={13} className="spinning" />
                   ) : (
                     <Crosshair size={13} />
                   )}
-                  <span>{gettingLocation ? 'জিপিএস খোঁজা হচ্ছে...' : 'আমার লাইভ GPS নাও'}</span>
+                  <span>{gettingLocation ? 'Locating...' : 'Get Live GPS'}</span>
                 </button>
               </div>
             </div>
@@ -195,7 +246,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 name="latitude"
                 step="any"
                 className="form-input"
-                placeholder="20.6272"
+                placeholder="22.2612"
                 value={form.latitude}
                 onChange={handleChange}
               />
@@ -211,32 +262,16 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 name="longitude"
                 step="any"
                 className="form-input"
-                placeholder="92.3218"
+                placeholder="73.1895"
                 value={form.longitude}
                 onChange={handleChange}
               />
               {errors.longitude && <span className="form-error">{errors.longitude}</span>}
             </div>
 
-            {/* Category */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="dest-category">ক্যাটাগরি</label>
-              <select
-                id="dest-category"
-                name="category"
-                className="form-select"
-                value={form.category}
-                onChange={handleChange}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-            </div>
-
             {/* Visited Toggle */}
-            <div className="form-group" style={{ justifyContent: 'center' }}>
-              <label className="form-label">ভ্রমণ করেছেন?</label>
+            <div className="form-group full-width" style={{ padding: '0.25rem 0' }}>
+              <label className="form-label">Visited Status</label>
               <label className="toggle-wrapper">
                 <input
                   type="checkbox"
@@ -247,18 +282,18 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 <div className={`toggle-track ${form.visited ? 'on' : ''}`}>
                   <div className={`toggle-thumb ${form.visited ? 'on' : ''}`} />
                 </div>
-                <span className="toggle-label">{form.visited ? '✅ হ্যাঁ, গিয়েছি' : 'না, যাবো'}</span>
+                <span className="toggle-label">{form.visited ? '✅ Visited' : '📌 To Visit'}</span>
               </label>
             </div>
 
             {/* Description */}
             <div className="form-group full-width">
-              <label className="form-label" htmlFor="dest-desc">সংক্ষিপ্ত বিবরণ</label>
+              <label className="form-label" htmlFor="dest-desc">Description & Highlights</label>
               <textarea
                 id="dest-desc"
                 name="description"
                 className="form-textarea"
-                placeholder="এই স্থানটির সৌন্দর্য বা ভ্রমণের কোনো বিশেষ টিপস..."
+                placeholder="Details about this mandir, specialty, timings, or route tips..."
                 value={form.description}
                 onChange={handleChange}
                 rows={3}
@@ -267,7 +302,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
 
             {/* Image URL */}
             <div className="form-group full-width">
-              <label className="form-label" htmlFor="dest-image">ছবির লিংক (Image URL)</label>
+              <label className="form-label" htmlFor="dest-image">Photo URL (Optional)</label>
               <input
                 id="dest-image"
                 type="url"
@@ -277,7 +312,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
                 value={form.imageUrl}
                 onChange={handleChange}
               />
-              <span className="form-hint">অনলাইন ছবির লিংক দিলে কার্ডে সুন্দর প্রিভিউ দেখতে পাবেন</span>
+              <span className="form-hint">Enter an image link to show a photo card preview</span>
             </div>
           </div>
 
@@ -288,7 +323,7 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
               className="btn btn-secondary"
               onClick={onClose}
             >
-              বাতিল
+              Cancel
             </button>
             <button
               id="save-destination-btn"
@@ -299,12 +334,12 @@ export default function DestinationModal({ isOpen, onClose, onSave, editingItem 
               {saving ? (
                 <>
                   <Loader size={16} className="spinning" />
-                  <span>সংরক্ষণ হচ্ছে...</span>
+                  <span>Saving...</span>
                 </>
               ) : (
                 <>
                   <MapPin size={16} />
-                  <span>{isEditing ? 'আপডেট করুন' : 'যোগ করুন'}</span>
+                  <span>{isEditing ? 'Update Stop' : 'Add Stop'}</span>
                 </>
               )}
             </button>

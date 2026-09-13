@@ -1,30 +1,22 @@
-import { MapPin, Navigation, Edit3, Trash2, CheckCircle2, Circle } from 'lucide-react';
+import { MapPin, Navigation, Edit3, Trash2, CheckCircle2, Circle, Route } from 'lucide-react';
 
-const CATEGORY_EMOJIS = {
-  beach: '🏖️',
-  mountain: '⛰️',
-  forest: '🌿',
-  heritage: '🏛️',
-  city: '🏙️',
-  island: '🏝️',
-  other: '📍',
-};
-
-const CATEGORY_LABELS = {
-  beach: 'সমুদ্র সৈকত',
-  mountain: 'পাহাড়',
-  forest: 'বন/জঙ্গল',
-  heritage: 'ঐতিহাসিক',
-  city: 'শহর',
-  island: 'দ্বীপ',
-  other: 'অন্যান্য',
+const CATEGORY_TAGS = {
+  manjalpur: 'Manjalpur Side',
+  'old-city': 'Old City',
+  bajwada: 'Bajwada Side',
+  navapura: 'Navapura',
+  kishanwadi: 'Kishanwadi',
+  darshan: 'Darshan',
+  other: 'Vadodara',
 };
 
 export default function DestinationCard({ destination, onEdit, onDelete, onToggleVisited, onNavigate }) {
   const {
     _id,
+    stopNumber,
     name,
     location,
+    distance,
     description,
     latitude,
     longitude,
@@ -33,12 +25,11 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
     visited,
   } = destination;
 
-  const emoji = CATEGORY_EMOJIS[category] || '📍';
-  const label = CATEGORY_LABELS[category] || category;
+  const categoryLabel = CATEGORY_TAGS[category] || category || 'Tour Stop';
 
   return (
     <article className="card">
-      {/* Image and badges */}
+      {/* Image & Badges */}
       <div className="card-image-wrapper">
         {imageUrl ? (
           <img
@@ -58,25 +49,30 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
           className="card-image-placeholder"
           style={{ display: imageUrl ? 'none' : 'flex' }}
         >
-          {emoji}
+          🛕
         </div>
 
         <div className="card-image-overlay" />
 
-        {/* Category badge */}
-        <span className={`card-category-badge cat-${category}`}>
-          {emoji} {label}
+        {/* Stop Number Badge */}
+        <span className="card-stop-badge">
+          Stop #{stopNumber || 1}
         </span>
 
-        {/* Visited badge */}
+        {/* Category / Area Badge */}
+        <span className={`card-category-badge cat-${category || 'other'}`}>
+          {categoryLabel}
+        </span>
+
+        {/* Visited Status Badge */}
         {visited && (
           <span className="card-visited-badge">
-            ✓ ভ্রমণ সম্পন্ন
+            ✓ Visited
           </span>
         )}
       </div>
 
-      {/* Body content */}
+      {/* Card Body */}
       <div className="card-body">
         <div className="card-header">
           <h3 className="card-name">{name}</h3>
@@ -85,8 +81,8 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
               id={`edit-${_id}`}
               className="btn btn-ghost btn-icon"
               onClick={() => onEdit(destination)}
-              title="সম্পাদনা করুন"
-              aria-label="সম্পাদনা"
+              title="Edit Stop"
+              aria-label="Edit"
             >
               <Edit3 size={16} />
             </button>
@@ -94,8 +90,8 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
               id={`delete-${_id}`}
               className="btn btn-ghost btn-icon"
               onClick={() => onDelete(_id)}
-              title="মুছে ফেলুন"
-              aria-label="মুছে ফেলুন"
+              title="Delete Stop"
+              aria-label="Delete"
               style={{ color: 'var(--accent-coral)' }}
             >
               <Trash2 size={16} />
@@ -108,15 +104,23 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
           <span>{location}</span>
         </div>
 
+        {/* Distance from previous stop */}
+        {distance && (
+          <div className="card-distance-tag">
+            <Route size={13} />
+            <span>{distance}</span>
+          </div>
+        )}
+
         {description && (
           <p className="card-description">{description}</p>
         )}
 
-        {/* Meta row: Coordinates + Quick Visited Toggle */}
+        {/* Coordinates & Visited Toggle */}
         <div className="card-meta-row">
           <div className="card-coords">
             <span className="coord-item">
-              📍 {latitude?.toFixed(3)}°, {longitude?.toFixed(3)}°
+              GPS: {latitude?.toFixed(4)}°, {longitude?.toFixed(4)}°
             </span>
           </div>
 
@@ -124,32 +128,32 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
             id={`toggle-visited-${_id}`}
             className={`card-visited-toggle-btn ${visited ? 'active' : ''}`}
             onClick={() => onToggleVisited(destination)}
-            title={visited ? 'ভ্রমণ চিহ্নিত সরানো' : 'ভ্রমণ সম্পন্ন চিহ্নিত করো'}
+            title={visited ? 'Mark as Not Visited' : 'Mark as Visited'}
           >
             {visited ? (
               <>
                 <CheckCircle2 size={14} />
-                <span>গিয়েছি</span>
+                <span>Visited</span>
               </>
             ) : (
               <>
                 <Circle size={14} />
-                <span>যাবো</span>
+                <span>To Visit</span>
               </>
             )}
           </button>
         </div>
 
-        {/* Full-width Touch-Friendly Map / Navigation Button */}
+        {/* Prominent Google Maps Navigation Button */}
         <div className="card-actions">
           <button
             id={`navigate-${_id}`}
             className="btn btn-map"
             onClick={() => onNavigate(destination)}
-            aria-label={`${name} এর দিকে গুগল ম্যাপ নেভিগেশন চালু করো`}
+            aria-label={`Open Google Maps navigation to ${name}`}
           >
             <Navigation size={18} />
-            <span>মানচিত্রে সরাসরি নেভিগেট করো</span>
+            <span>Navigate on Google Maps</span>
           </button>
         </div>
       </div>
