@@ -55,7 +55,7 @@
   --radius-xl: 26px;
   --radius-full: 9999px;
 
-  --font-sans: 'Inter', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -359,6 +359,30 @@ body {
   max-width: 440px;
   margin: 0 auto 1.25rem;
   line-height: 1.45;
+}
+
+/* Route Flow Banner */
+.route-flow-banner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  background: rgba(24, 34, 54, 0.7);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 auto 1.15rem;
+  max-width: 90%;
+  backdrop-filter: blur(8px);
+}
+
+.route-arrow {
+  color: var(--accent-secondary);
+  font-weight: 700;
 }
 
 /* Mobile Search Bar */
@@ -690,6 +714,36 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.card-stop-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: var(--grad-primary);
+  color: white;
+  box-shadow: 0 2px 10px rgba(108, 99, 255, 0.5);
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+.card-distance-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0, 212, 170, 0.12);
+  border: 1px solid rgba(0, 212, 170, 0.28);
+  color: var(--accent-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-xs);
+  margin-bottom: 0.65rem;
+  width: fit-content;
+}
+
 .card-visited-badge {
   position: absolute;
   top: 10px;
@@ -812,14 +866,14 @@ body {
 }
 
 /* ===================================================
-   CATEGORY COLORS
+   CATEGORY & ZONE COLORS
    =================================================== */
-.cat-beach { background: rgba(56, 189, 248, 0.22); color: #38bdf8; }
-.cat-mountain { background: rgba(167, 139, 250, 0.22); color: #a78bfa; }
-.cat-forest { background: rgba(52, 211, 153, 0.22); color: #34d399; }
-.cat-heritage { background: rgba(251, 191, 36, 0.22); color: #fbbf24; }
-.cat-city { background: rgba(249, 115, 22, 0.22); color: #f97316; }
-.cat-island { background: rgba(0, 212, 170, 0.22); color: #00d4aa; }
+.cat-manjalpur { background: rgba(56, 189, 248, 0.22); color: #38bdf8; }
+.cat-old-city { background: rgba(251, 191, 36, 0.22); color: #fbbf24; }
+.cat-bajwada { background: rgba(167, 139, 250, 0.22); color: #a78bfa; }
+.cat-navapura { background: rgba(52, 211, 153, 0.22); color: #34d399; }
+.cat-kishanwadi { background: rgba(249, 115, 22, 0.22); color: #f97316; }
+.cat-darshan { background: rgba(108, 99, 255, 0.22); color: #818cf8; }
 .cat-other { background: rgba(108, 99, 255, 0.22); color: #818cf8; }
 
 /* ===================================================
