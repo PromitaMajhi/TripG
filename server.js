@@ -14,7 +14,7 @@ app.use(express.json());
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tripg';
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, { dbName: 'tripg' })
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => console.error('❌ MongoDB error:', err));
 
