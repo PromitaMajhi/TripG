@@ -116,23 +116,23 @@ Create or inspect your [`.env.local`](./.env.local) file in the root directory:
 # -------------------------------------------------------------
 # Supabase Client & Authentication
 # -------------------------------------------------------------
-NEXT_PUBLIC_SUPABASE_URL=https://qcyqhqwwnjggssalmtwq.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_h10uuhG9_OIZSx9psNuHBw_Xxyx1kUj
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_h10uuhG9_OIZSx9psNuHBw_Xxyx1kUj
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_<your-key>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_<your-key>
 
 # -------------------------------------------------------------
 # Supabase Server Verification
 # -------------------------------------------------------------
-SUPABASE_URL=https://qcyqhqwwnjggssalmtwq.supabase.co
-SUPABASE_PUBLISHABLE_KEY=sb_publishable_h10uuhG9_OIZSx9psNuHBw_Xxyx1kUj
-SUPABASE_SECRET_KEY=sb_secret_2xAkzthg3Io1Vg7uOnmp0Q_C1A050g9
-SUPABASE_JWKS_URL=https://qcyqhqwwnjggssalmtwq.supabase.co/auth/v1/.well-known/jwks.json
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_<your-key>
+SUPABASE_SECRET_KEY=sb_secret_<your-secret-key>
+SUPABASE_JWKS_URL=https://<your-project-ref>.supabase.co/auth/v1/.well-known/jwks.json
 
 # -------------------------------------------------------------
 # PostgreSQL Database & Prisma Connection Pooling
 # -------------------------------------------------------------
-DATABASE_URL="postgresql://postgres.qcyqhqwwnjggssalmtwq:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres.qcyqhqwwnjggssalmtwq:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+DATABASE_URL="postgresql://postgres.<your-project-ref>:[YOUR-PASSWORD]@aws-0-<region>.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.<your-project-ref>:[YOUR-PASSWORD]@aws-0-<region>.pooler.supabase.com:5432/postgres"
 ```
 
 ---
