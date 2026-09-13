@@ -1,13 +1,13 @@
-import { MapPin, Navigation, Edit3, Trash2, CheckCircle2, Circle, Route } from 'lucide-react';
+import { MapPin, Navigation, Edit3, Trash2, CheckCircle2, Circle, Route, Landmark, Building2, Map, Sparkles, Milestone, Compass } from 'lucide-react';
 
 const CATEGORY_TAGS = {
-  manjalpur: 'Manjalpur Side',
-  'old-city': 'Old City',
-  bajwada: 'Bajwada Side',
-  navapura: 'Navapura',
-  kishanwadi: 'Kishanwadi',
-  darshan: 'Darshan',
-  other: 'Vadodara',
+  manjalpur: { label: 'Manjalpur Side', Icon: MapPin },
+  'old-city': { label: 'Old City', Icon: Landmark },
+  bajwada: { label: 'Bajwada Side', Icon: Building2 },
+  navapura: { label: 'Navapura', Icon: Map },
+  kishanwadi: { label: 'Kishanwadi', Icon: Sparkles },
+  darshan: { label: 'Darshan', Icon: Milestone },
+  other: { label: 'Vadodara', Icon: MapPin },
 };
 
 export default function DestinationCard({ destination, onEdit, onDelete, onToggleVisited, onNavigate }) {
@@ -25,11 +25,12 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
     visited,
   } = destination;
 
-  const categoryLabel = CATEGORY_TAGS[category] || category || 'Tour Stop';
+  const catConfig = CATEGORY_TAGS[category] || { label: category || 'Tour Stop', Icon: MapPin };
+  const CategoryIcon = catConfig.Icon;
 
   return (
     <article className="card">
-      {/* Image & Badges */}
+      {/* 3D Image & Badges */}
       <div className="card-image-wrapper">
         {imageUrl ? (
           <img
@@ -45,29 +46,35 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
             }}
           />
         ) : null}
+        
+        {/* 3D Placeholder when photo is not present */}
         <div
           className="card-image-placeholder"
           style={{ display: imageUrl ? 'none' : 'flex' }}
         >
-          🛕
+          <div className="placeholder-icon-circle">
+            <Compass size={28} />
+          </div>
         </div>
 
         <div className="card-image-overlay" />
 
-        {/* Stop Number Badge */}
+        {/* 3D Stop Number Badge */}
         <span className="card-stop-badge">
           Stop #{stopNumber || 1}
         </span>
 
-        {/* Category / Area Badge */}
+        {/* Category / Area Badge with Vector Icon */}
         <span className={`card-category-badge cat-${category || 'other'}`}>
-          {categoryLabel}
+          <CategoryIcon size={12} />
+          <span>{catConfig.label}</span>
         </span>
 
-        {/* Visited Status Badge */}
+        {/* Visited Status Badge with Vector Icon */}
         {visited && (
           <span className="card-visited-badge">
-            ✓ Visited
+            <CheckCircle2 size={13} />
+            <span>Visited</span>
           </span>
         )}
       </div>
@@ -92,7 +99,7 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
               onClick={() => onDelete(_id)}
               title="Delete Stop"
               aria-label="Delete"
-              style={{ color: 'var(--accent-coral)' }}
+              style={{ color: '#fb7185' }}
             >
               <Trash2 size={16} />
             </button>
@@ -100,7 +107,7 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
         </div>
 
         <div className="card-location">
-          <MapPin size={14} />
+          <MapPin size={15} />
           <span>{location}</span>
         </div>
 
@@ -144,7 +151,7 @@ export default function DestinationCard({ destination, onEdit, onDelete, onToggl
           </button>
         </div>
 
-        {/* Prominent Google Maps Navigation Button */}
+        {/* 3D Google Maps Navigation Button */}
         <div className="card-actions">
           <button
             id={`navigate-${_id}`}

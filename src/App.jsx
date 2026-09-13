@@ -1,6 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
-import { Search, Plus, Navigation, CheckCircle2, Compass, X, Clock, MapPin, Milestone } from 'lucide-react';
+import { 
+  Search, 
+  Plus, 
+  Navigation, 
+  CheckCircle2, 
+  Compass, 
+  X, 
+  Clock, 
+  MapPin, 
+  Milestone, 
+  Landmark, 
+  Building2, 
+  Map, 
+  Sparkles, 
+  ArrowRight 
+} from 'lucide-react';
 import Header from './components/Header.jsx';
 import DestinationCard from './components/DestinationCard.jsx';
 import DestinationModal from './components/DestinationModal.jsx';
@@ -8,14 +23,14 @@ import DestinationModal from './components/DestinationModal.jsx';
 const API_BASE = '/api/destinations';
 
 const FILTER_TABS = [
-  { id: 'all', label: '🗺️ All Stops' },
-  { id: 'manjalpur', label: '📍 Manjalpur' },
-  { id: 'old-city', label: '🏛️ Old City' },
-  { id: 'bajwada', label: '🛕 Bajwada' },
-  { id: 'navapura', label: '🏘️ Navapura' },
-  { id: 'kishanwadi', label: '⭐ Kishanwadi' },
-  { id: 'pending', label: '📌 To Visit' },
-  { id: 'visited', label: '✅ Visited' },
+  { id: 'all', label: 'All Stops', Icon: Compass },
+  { id: 'manjalpur', label: 'Manjalpur', Icon: MapPin },
+  { id: 'old-city', label: 'Old City', Icon: Landmark },
+  { id: 'bajwada', label: 'Bajwada', Icon: Building2 },
+  { id: 'navapura', label: 'Navapura', Icon: Map },
+  { id: 'kishanwadi', label: 'Kishanwadi', Icon: Sparkles },
+  { id: 'pending', label: 'To Visit', Icon: Clock },
+  { id: 'visited', label: 'Visited', Icon: CheckCircle2 },
 ];
 
 export default function App() {
@@ -34,14 +49,13 @@ export default function App() {
       const res = await fetch(API_BASE);
       const data = await res.json();
       if (data.success) {
-        // Sort by stopNumber
         const sorted = (data.data || []).sort((a, b) => (a.stopNumber || 0) - (b.stopNumber || 0));
         setDestinations(sorted);
       } else {
         toast.error('Failed to load tour data: ' + data.error);
       }
     } catch (err) {
-      toast.error('Could not connect to the database.');
+      toast.error('Could not connect to database.');
     } finally {
       setLoading(false);
     }
@@ -131,26 +145,26 @@ export default function App() {
       return;
     }
 
-    const loadingToast = toast.loading('Detecting your live GPS location...');
+    const loadingToast = toast.loading('Locating GPS position...');
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         toast.dismiss(loadingToast);
         const { latitude: userLat, longitude: userLng } = pos.coords;
 
-        // Opens Google Maps app directly on phone with turn-by-turn driving directions
+        // Opens Google Maps directly with driving route from user's live position
         const mapsUrl =
           `https://www.google.com/maps/dir/?api=1` +
           `&origin=${userLat},${userLng}` +
           `&destination=${latitude},${longitude}` +
           `&travelmode=driving`;
 
-        toast.success(`Opening Google Maps for ${name}!`);
+        toast.success(`Opening Google Maps navigation to ${name}!`);
         window.open(mapsUrl, '_blank');
       },
       (err) => {
         toast.dismiss(loadingToast);
-        toast('Location unavailable. Opening destination on map directly.', { icon: '📍' });
+        toast('Location unavailable. Opening destination on map directly.');
         const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`;
         window.open(fallbackUrl, '_blank');
       },
@@ -178,7 +192,7 @@ export default function App() {
     }
   };
 
-  // FILTER & SEARCH
+  // FILTER & SEARCH LOGIC
   const filtered = destinations.filter((d) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch =
@@ -211,13 +225,13 @@ export default function App() {
         position="top-center"
         toastOptions={{
           style: {
-            background: 'var(--bg-card)',
-            color: 'var(--text-primary)',
-            border: '1px solid var(--border-card)',
+            background: '#1c1233',
+            color: '#ffffff',
+            border: '1px solid rgba(255, 46, 147, 0.35)',
             fontFamily: 'var(--font-sans)',
             fontSize: '0.88rem',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-            borderRadius: '12px',
+            boxShadow: '0 12px 36px rgba(0,0,0,0.7), 0 0 20px rgba(255, 46, 147, 0.3)',
+            borderRadius: '14px',
           },
         }}
       />
@@ -234,22 +248,22 @@ export default function App() {
 
         <h1>Vadodara Darshan Tour</h1>
 
-        {/* Route Banner */}
+        {/* 3D Route Flow Banner without emojis */}
         <div className="route-flow-banner">
           <span>Parul Univ</span>
-          <span className="route-arrow">→</span>
+          <span className="route-arrow"><ArrowRight size={12} /></span>
           <span>Manjalpur</span>
-          <span className="route-arrow">→</span>
+          <span className="route-arrow"><ArrowRight size={12} /></span>
           <span>Old City</span>
-          <span className="route-arrow">→</span>
+          <span className="route-arrow"><ArrowRight size={12} /></span>
           <span>Navapura</span>
-          <span className="route-arrow">→</span>
+          <span className="route-arrow"><ArrowRight size={12} /></span>
           <span>Kishanwadi</span>
         </div>
 
-        <p>Explore all 11 sacred Ganesh mandals with live turn-by-turn Google Maps GPS navigation.</p>
+        <p>Explore all 11 sacred destinations with live turn-by-turn Google Maps GPS navigation.</p>
 
-        {/* Search Bar */}
+        {/* 3D Search Bar */}
         <div className="search-box-container">
           <div className="search-box-inner">
             <Search size={18} className="search-icon-svg" />
@@ -276,7 +290,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Clickable Stat Cards */}
+        {/* 3D Clickable Stat Cards */}
         <div className="hero-stats">
           <div
             className={`stat-card ${activeFilter === 'all' ? 'active' : ''}`}
@@ -294,7 +308,7 @@ export default function App() {
             role="button"
             tabIndex={0}
           >
-            <div className="stat-number" style={{ color: 'var(--accent-secondary)' }}>
+            <div className="stat-number" style={{ color: 'var(--accent-emerald)' }}>
               {visitedCount}
             </div>
             <div className="stat-label">Visited</div>
@@ -306,7 +320,7 @@ export default function App() {
             role="button"
             tabIndex={0}
           >
-            <div className="stat-number" style={{ color: 'var(--accent-sky)' }}>
+            <div className="stat-number" style={{ color: 'var(--accent-pink)' }}>
               {pendingCount}
             </div>
             <div className="stat-label">To Visit</div>
@@ -314,21 +328,25 @@ export default function App() {
         </div>
       </section>
 
-      {/* Filter Tabs */}
+      {/* 3D Filter Tabs with Vector Icons Only */}
       <div className="filter-section">
         <div className="filter-tabs" role="tablist" aria-label="Filter tour stops">
-          {FILTER_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              id={`filter-${tab.id}`}
-              className={`filter-tab ${activeFilter === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveFilter(tab.id)}
-              role="tab"
-              aria-selected={activeFilter === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {FILTER_TABS.map((tab) => {
+            const IconComponent = tab.Icon;
+            return (
+              <button
+                key={tab.id}
+                id={`filter-${tab.id}`}
+                className={`filter-tab ${activeFilter === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveFilter(tab.id)}
+                role="tab"
+                aria-selected={activeFilter === tab.id}
+              >
+                <IconComponent size={15} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -353,12 +371,14 @@ export default function App() {
           <div className="grid">
             {filtered.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-icon">🛕</div>
+                <div className="empty-icon-box">
+                  <Compass size={38} />
+                </div>
                 <h3>No destinations found</h3>
                 <p>
                   {searchQuery
                     ? `No stops match "${searchQuery}".`
-                    : 'No destinations found in this filter category.'}
+                    : 'No destinations found in this category.'}
                 </p>
                 <button
                   className="btn btn-primary"
@@ -385,7 +405,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Desktop Floating Action Button */}
+      {/* Desktop 3D Floating Action Button */}
       <button
         id="fab-add-btn"
         className="fab"
@@ -393,10 +413,10 @@ export default function App() {
         aria-label="Add Destination"
         title="Add New Destination"
       >
-        <Plus size={26} />
+        <Plus size={28} strokeWidth={2.5} />
       </button>
 
-      {/* Mobile Bottom Navigation Bar */}
+      {/* Mobile 3D Bottom Navigation Bar */}
       <nav className="bottom-nav" aria-label="Mobile Navigation">
         <button
           className={`bottom-nav-item ${activeFilter === 'all' ? 'active' : ''}`}
@@ -416,7 +436,7 @@ export default function App() {
           <span>Visited</span>
         </button>
 
-        {/* Center Glowing Add Button */}
+        {/* 3D Floating Center Add Button */}
         <button
           id="mobile-nav-add-btn"
           className="bottom-nav-add-btn"
@@ -424,7 +444,7 @@ export default function App() {
           aria-label="Add Tour Stop"
           title="Add Stop"
         >
-          <Plus size={26} strokeWidth={2.5} />
+          <Plus size={26} strokeWidth={2.8} />
         </button>
 
         <button
@@ -446,7 +466,7 @@ export default function App() {
         </button>
       </nav>
 
-      {/* Modal / Bottom Sheet */}
+      {/* 3D Modal / Bottom Sheet */}
       <DestinationModal
         isOpen={modalOpen}
         onClose={() => {
