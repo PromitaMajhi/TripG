@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 const DestinationSchema = new mongoose.Schema(
   {
+    stopNumber: {
+      type: Number,
+      default: 1,
+    },
     name: {
       type: String,
       required: [true, 'Destination name is required'],
@@ -10,6 +14,16 @@ const DestinationSchema = new mongoose.Schema(
     location: {
       type: String,
       required: [true, 'Location is required'],
+      trim: true,
+    },
+    distance: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    searchQuery: {
+      type: String,
+      default: '',
       trim: true,
     },
     description: {
@@ -31,8 +45,7 @@ const DestinationSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['beach', 'mountain', 'forest', 'heritage', 'city', 'island', 'other'],
-      default: 'other',
+      default: 'darshan',
     },
     visited: {
       type: Boolean,
