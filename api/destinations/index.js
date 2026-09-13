@@ -17,14 +17,14 @@ export default async function handler(req, res) {
     console.error('MongoDB connection error:', err);
     return res.status(500).json({
       success: false,
-      error: 'ডেটাবেজ কানেক্ট করা যায়নি: ' + err.message,
+      error: 'Database connection failed: ' + err.message,
     });
   }
 
   // GET all destinations
   if (req.method === 'GET') {
     try {
-      const destinations = await Destination.find({}).sort({ createdAt: -1 });
+      const destinations = await Destination.find({}).sort({ stopNumber: 1, createdAt: -1 });
       return res.status(200).json({ success: true, data: destinations });
     } catch (error) {
       return res.status(500).json({ success: false, error: error.message });
