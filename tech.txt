@@ -1,0 +1,19 @@
+🛠️ Technology Stack
+Core Framework
+Next.js 16 (App Router + Turbopack)
+React 19 — Server & Client Components
+TypeScript — 100% type-safe codebase
+Frontend & Styling
+Tailwind CSS v4 — Custom Velvet Soliloquy design tokens
+Framer Motion — Floating hearts, particle animations, modal transitions
+Lucide React + Custom Brand SVGs (Facebook, Instagram, YouTube)
+Google Fonts: Playfair Display, Plus Jakarta Sans, Hind Siliguri
+Database & Backend
+Supabase PostgreSQL — Real-time database (Mumbai, India region)
+@supabase/supabase-js — Official JS client
+@supabase/ssr — Next.js SSR session management
+Row Level Security (RLS) — Database-level security policies
+Next.js Route Handlers — Serverless API endpoints
+Hosting & Deployment
+Vercel — Edge network deployment with serverless functions
+GitHub — Source code repository
